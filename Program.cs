@@ -1,4 +1,5 @@
 using MongoDB.Driver;
+using Expense_BE.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,9 @@ builder.Services.AddScoped(serviceProvider =>
     var database = client.GetDatabase(settings.GetSection("DatabaseName").Value);
     return database;
 });
+
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ExpenseService>();
 
 var app = builder.Build();
 
