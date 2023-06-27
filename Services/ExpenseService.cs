@@ -3,12 +3,10 @@ using MongoDB.Driver;
 
 namespace Expense_BE.Services;
 
-public class ExpenseService
-{
+public class ExpenseService {
     private readonly IMongoCollection<Expense> _expenses;
 
-    public ExpenseService(IConfiguration config, IMongoDatabase database)
-    {
+    public ExpenseService(IConfiguration config, IMongoDatabase database) {
         _expenses = database.GetCollection<Expense>(config.GetSection("MongoDb:ExpensesCollectionName").Value);
     }
 

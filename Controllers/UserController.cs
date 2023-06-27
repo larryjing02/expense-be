@@ -15,6 +15,40 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
+    // Production endpoints
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(RegisterItem newUser)
+    {
+        // Verify user does not already exist in table
+        if (await _userService.GetByUsernameAsync(newUser.Username) != null)
+            return Conflict(new { message = "User with given username already exists" });
+
+        var userToCreate = new User {
+            Username = newUser.Username,
+            HashedPassword = newUser.Password,
+            FirstName = newUser.FirstName,
+            LastName = newUser.LastName
+        };
+        await _userService.CreateAsync(userToCreate);
+        return NoContent();        
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginItem login)
+    {
+        // Verify user exists in table
+        var user = await _userService.GetByUsernameAsync(login.Username);
+        if (user == null)
+            return NotFound(new { message = "Invalid username. Please try again." });
+        // Validate password
+        if (!_userService.CheckPassword(user, login.Password)) {
+            return Unauthorized(new { message = "Incorrect password. Please try again."});
+        }
+        // Login is valid - generate JWT and return as cookie
+        return Ok();        
+    }
+
+    // The following endpoints are used for development only
     [HttpGet]
     public async Task<List<User>> Get() =>
         await _userService.GetAsync();

@@ -1,6 +1,6 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-
+using System.Text.Json.Serialization;
 namespace Expense_BE.Models;
 
 public class User {
@@ -10,7 +10,9 @@ public class User {
 
     public string Username { get; set; } = null!;
 
-    public string Password { get; set; } = null!;
+    [BsonElement("Password")]
+    [JsonPropertyName("Password")]
+    public string HashedPassword { get; set; } = null!;
 
     public string FirstName { get; set; } = null!;
 
