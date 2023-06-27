@@ -1,0 +1,80 @@
+# .NET Core
+bin/
+obj/
+
+# Build artifacts
+[Bb]in/
+[Dd]ebug/
+[Rr]elease/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# NuGet Packages
+*.nupkg
+**/project.lock.json
+project.assets.json
+*.cache
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Oo]bj/
+[Dd]ebugSymbol/
+.ipch/
+*.pdb
+*.dll
+*.exe
+
+# MSTest Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# ASP.NET Core
+wwwroot/
+
+# Entity Framework Core
+*.edmx
+*.edmx.*
+*.csdl
+*.msl
+*.ssdl
+*.DBGenerated.cs
+*.DBContext.cs
+
+# MongoDB
+data/
+dump/
+log/
+journal/
+
+# User-specific files
+*.user*
+*.suo
+*.userprefs
+*.bak
+
+# VS Code CSharp extension
+.vscode/
+*.vscode/
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Resharper specific
+_ReSharper*/
+*.resharper
+*.DotSettings.user
+
+# GhostDoc plugin setting file
+*.GhostDoc.xml
+
+# User settings file
+*.sln.DotSettings.user
