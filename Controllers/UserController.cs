@@ -6,19 +6,16 @@ namespace Expense_BE.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController : ControllerBase
-{
+public class UserController : ControllerBase {
     private readonly UserService _userService;
 
-    public UserController(UserService userService)
-    {
+    public UserController(UserService userService) {
         _userService = userService;
     }
 
     // Production endpoints
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterItem newUser)
-    {
+    public async Task<IActionResult> Register(RegisterItem newUser) {
         // Verify user does not already exist in table
         if (await _userService.GetByUsernameAsync(newUser.Username) != null)
             return Conflict(new { message = "User with given username already exists" });
@@ -30,19 +27,18 @@ public class UserController : ControllerBase
             LastName = newUser.LastName
         };
         await _userService.CreateAsync(userToCreate);
-        return NoContent();        
+        return NoContent();
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginItem login)
-    {
+    public async Task<IActionResult> Login(LoginItem login) {
         // Verify user exists in table
         var user = await _userService.GetByUsernameAsync(login.Username);
         if (user == null)
             return NotFound(new { message = "Invalid username. Please try again." });
         // Validate password
         if (!_userService.CheckPassword(user, login.Password)) {
-            return Unauthorized(new { message = "Incorrect password. Please try again."});
+            return Unauthorized(new { message = "Incorrect password. Please try again." });
         }
         // Login is valid - generate JWT and return as cookie
         var token = _userService.GenerateJwtToken(user);
@@ -51,38 +47,33 @@ public class UserController : ControllerBase
     }
 
     // The following endpoints are used for development only
-    [HttpGet]
+    [HttpGet("dev")]
     public async Task<List<User>> Get() =>
         await _userService.GetAsync();
 
-    [HttpGet("{id:length(24)}")]
-    public async Task<ActionResult<User>> Get(string id)
-    {
+    [HttpGet("dev/{id:length(24)}")]
+    public async Task<ActionResult<User>> Get(string id) {
         var user = await _userService.GetAsync(id);
 
-        if (user is null)
-        {
+        if (user is null) {
             return NotFound();
         }
 
         return user;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Post(User newUser)
-    {
+    [HttpPost("dev")]
+    public async Task<IActionResult> Post(User newUser) {
         await _userService.CreateAsync(newUser);
 
         return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
     }
 
-    [HttpPut("{id:length(24)}")]
-    public async Task<IActionResult> Update(string id, User updatedUser)
-    {
+    [HttpPut("dev/{id:length(24)}")]
+    public async Task<IActionResult> Update(string id, User updatedUser) {
         var user = await _userService.GetAsync(id);
 
-        if (user is null)
-        {
+        if (user is null) {
             return NotFound();
         }
 
@@ -93,13 +84,11 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id:length(24)}")]
-    public async Task<IActionResult> Delete(string id)
-    {
+    [HttpDelete("dev/{id:length(24)}")]
+    public async Task<IActionResult> Delete(string id) {
         var user = await _userService.GetAsync(id);
 
-        if (user is null)
-        {
+        if (user is null) {
             return NotFound();
         }
 

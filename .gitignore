@@ -78,3 +78,6 @@ _ReSharper*/
 
 # User settings file
 *.sln.DotSettings.user
+
+# Formatting settings
+omnisharp.json

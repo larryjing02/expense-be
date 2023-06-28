@@ -15,16 +15,25 @@ public class ExpenseService {
 
     public async Task<Expense?> GetAsync(string id) =>
         await _expenses.Find(x => x.Id == id).FirstOrDefaultAsync();
+    
+    public async Task<Expense?> GetByUserIdAsync(string id, string userId) =>
+        await _expenses.Find(x => (x.Id == id) && (x.UserId == userId)).FirstOrDefaultAsync();
 
-    public async Task<List<Expense>> GetByUserIdAsync(string userId) =>
+    public async Task<List<Expense>> GetAllByUserIdAsync(string userId) =>
         await _expenses.Find(x => x.UserId == userId).ToListAsync();
 
-    public async Task CreateAsync(Expense newExpense) =>
+    public async Task<Expense> CreateAsync(Expense newExpense) {
         await _expenses.InsertOneAsync(newExpense);
+        return newExpense;
+    }
 
     public async Task UpdateAsync(string id, Expense updatedExpense) =>
         await _expenses.ReplaceOneAsync(x => x.Id == id, updatedExpense);
 
     public async Task RemoveAsync(string id) =>
         await _expenses.DeleteOneAsync(x => x.Id == id);
+    
+    public async Task RemoveByUserIdAsync(string id, string userId) =>
+        await _expenses.DeleteOneAsync(x => (x.Id == id) && (x.UserId == userId));
+
 }
