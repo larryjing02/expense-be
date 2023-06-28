@@ -16,6 +16,9 @@ public class ExpenseService {
     public async Task<Expense?> GetAsync(string id) =>
         await _expenses.Find(x => x.Id == id).FirstOrDefaultAsync();
 
+    public async Task<List<Expense>> GetByUserIdAsync(string userId) =>
+        await _expenses.Find(x => x.UserId == userId).ToListAsync();
+
     public async Task CreateAsync(Expense newExpense) =>
         await _expenses.InsertOneAsync(newExpense);
 

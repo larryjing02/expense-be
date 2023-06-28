@@ -1,5 +1,6 @@
 using Expense_BE.Models;
 using Expense_BE.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Expense_BE.Controllers;
@@ -15,9 +16,24 @@ public class ExpenseController : ControllerBase
         _expenseService = expenseService;
     }
 
+    [Authorize]
     [HttpGet]
-    public async Task<List<Expense>> Get() =>
-        await _expenseService.GetAsync();
+    public async Task<ActionResult<List<Expense>>> GetUserExpenses() {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
+        if (userIdClaim == null) {
+            return Unauthorized(new { message = "JWT contains invalid user ID"});
+        }
+        var expenses = await _expenseService.GetByUserIdAsync(userIdClaim.Value);
+        return expenses;
+    }
+
+    // Used for development only
+    [HttpGet("all")]
+    public async Task<List<Expense>> GetAllExpenses() {
+        return await _expenseService.GetAsync();
+    }
+
+    
 
     [HttpGet("{id:length(24)}")]
     public async Task<ActionResult<Expense>> Get(string id)

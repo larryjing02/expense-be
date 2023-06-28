@@ -45,7 +45,9 @@ public class UserController : ControllerBase
             return Unauthorized(new { message = "Incorrect password. Please try again."});
         }
         // Login is valid - generate JWT and return as cookie
-        return Ok();        
+        var token = _userService.GenerateJwtToken(user);
+        Response.Cookies.Append("jwt", token, new CookieOptions { HttpOnly = true });
+        return Ok(new { message = "Login successful", token = token });
     }
 
     // The following endpoints are used for development only
