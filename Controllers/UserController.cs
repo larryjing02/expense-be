@@ -13,7 +13,6 @@ public class UserController : ControllerBase {
         _userService = userService;
     }
 
-    // Production endpoints
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterItem newUser) {
         // Verify user does not already exist in table
@@ -44,56 +43,5 @@ public class UserController : ControllerBase {
         var token = _userService.GenerateJwtToken(user);
         Response.Cookies.Append("jwt", token, new CookieOptions { HttpOnly = true });
         return Ok(new { message = "Login successful", token = token });
-    }
-
-    // The following endpoints are used for development only
-    [HttpGet("dev")]
-    public async Task<List<User>> Get() =>
-        await _userService.GetAsync();
-
-    [HttpGet("dev/{id:length(24)}")]
-    public async Task<ActionResult<User>> Get(string id) {
-        var user = await _userService.GetAsync(id);
-
-        if (user is null) {
-            return NotFound();
-        }
-
-        return user;
-    }
-
-    [HttpPost("dev")]
-    public async Task<IActionResult> Post(User newUser) {
-        await _userService.CreateAsync(newUser);
-
-        return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
-    }
-
-    [HttpPut("dev/{id:length(24)}")]
-    public async Task<IActionResult> Update(string id, User updatedUser) {
-        var user = await _userService.GetAsync(id);
-
-        if (user is null) {
-            return NotFound();
-        }
-
-        updatedUser.Id = user.Id;
-
-        await _userService.UpdateAsync(id, updatedUser);
-
-        return NoContent();
-    }
-
-    [HttpDelete("dev/{id:length(24)}")]
-    public async Task<IActionResult> Delete(string id) {
-        var user = await _userService.GetAsync(id);
-
-        if (user is null) {
-            return NotFound();
-        }
-
-        await _userService.RemoveAsync(id);
-
-        return NoContent();
     }
 }
