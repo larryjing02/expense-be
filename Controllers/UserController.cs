@@ -33,11 +33,8 @@ public class UserController : ControllerBase {
     public async Task<IActionResult> Login(LoginItem login) {
         // Verify user exists in table
         var user = await _userService.GetByUsernameAsync(login.Username);
-        if (user == null)
-            return NotFound(new { message = "Invalid username. Please try again." });
-        // Validate password
-        if (!_userService.CheckPassword(user, login.Password)) {
-            return Unauthorized(new { message = "Incorrect password. Please try again." });
+        if (user == null || !_userService.CheckPassword(user, login.Password)) {
+            return Unauthorized(new { message = "Incorrect username or password. Please try again." });
         }
         // Login is valid - generate JWT and return as cookie
         var token = _userService.GenerateJwtToken(user);
