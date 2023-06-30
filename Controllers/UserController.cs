@@ -16,9 +16,9 @@ public class UserController : ControllerBase {
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterItem newUser) {
         // Verify user does not already exist in table
-        if (await _userService.GetByUsernameAsync(newUser.Username) != null)
+        if (await _userService.GetByUsernameAsync(newUser.Username) != null) {
             return Conflict(new { message = "User with given username already exists" });
-
+        }
         var userToCreate = new User {
             Username = newUser.Username,
             HashedPassword = newUser.Password,
@@ -33,12 +33,17 @@ public class UserController : ControllerBase {
     public async Task<IActionResult> Login(LoginItem login) {
         // Verify user exists in table
         var user = await _userService.GetByUsernameAsync(login.Username);
-        if (user == null || !_userService.CheckPassword(user, login.Password)) {
+        if (user == null) {
+            return NotFound(new { message = "Username not found. Please try again. " });
+        } else if (!_userService.CheckPassword(user, login.Password)) {
             return Unauthorized(new { message = "Incorrect username or password. Please try again." });
         }
         // Login is valid - generate JWT and return as cookie
         var token = _userService.GenerateJwtToken(user);
         Response.Cookies.Append("jwt", token, new CookieOptions { HttpOnly = true });
-        return Ok(new { message = "Login successful", token = token });
+        return Ok(new { message = "Login successful",
+                        token = token,
+                        firstName = user.FirstName,
+                        userId = user.Id });
     }
 }
