@@ -26,7 +26,12 @@ public class UserController : ControllerBase {
             LastName = newUser.LastName
         };
         await _userService.CreateAsync(userToCreate);
-        return NoContent();
+        // Registration is valid - generate JWT and return as cookie
+        var token = _userService.GenerateJwtToken(userToCreate);
+        return Ok(new { message = "Registration successful",
+                        token = token,
+                        firstName = userToCreate.FirstName,
+                        userId = userToCreate.Id });
     }
 
     [HttpPost("login")]
