@@ -15,6 +15,14 @@ public class ExpenseService {
 
     public async Task<Expense?> GetAsync(string id) =>
         await _expenses.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+    public async Task<List<KeyValuePair<string, decimal>>> GetExpensesSumByCategoryAsync(string userId) {
+        var expenses = await _expenses.Find(x => x.UserId == userId).ToListAsync();
+        return expenses.GroupBy(e => e.Category)
+                    .Select(g => new KeyValuePair<string, decimal>(g.Key, g.Sum(e => e.Amount)))
+                    .OrderByDescending(e => e.Value)
+                    .ToList();
+    }
     
     public async Task<Expense?> GetByUserIdAsync(string id, string userId) =>
         await _expenses.Find(x => (x.Id == id) && (x.UserId == userId)).FirstOrDefaultAsync();

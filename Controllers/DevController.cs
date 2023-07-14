@@ -81,6 +81,11 @@ public class DevController : ControllerBase {
         return expense;
     }
 
+    [HttpGet("expense/categories/{userId:length(24)}")]
+    public async Task<ActionResult<List<KeyValuePair<string, decimal>>>> GetExpensesSumByCategory(string userId) {
+        return await _expenseService.GetExpensesSumByCategoryAsync(userId);
+    }
+
     [HttpPost("expense")]
     public async Task<IActionResult> PostExpense(Expense newExpense) {
         await _expenseService.CreateAsync(newExpense);

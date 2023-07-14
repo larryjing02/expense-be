@@ -2,7 +2,6 @@ using Expense_BE.Models;
 using Expense_BE.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 namespace Expense_BE.Controllers;
 
 [ApiController]
@@ -26,6 +25,18 @@ public class ExpenseController : ControllerBase {
     }
 
     [Authorize]
+    [HttpGet("categories")]
+    public async Task<ActionResult<List<KeyValuePair<string, decimal>>>> GetExpensesSumByCategory() {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
+        if (userIdClaim == null)
+        {
+            return Unauthorized(new { message = "JWT contains invalid user ID" });
+        }
+        var sumByCategory = await _expenseService.GetExpensesSumByCategoryAsync(userIdClaim.Value);
+        return sumByCategory;
+    }
+
+    [Authorize]
     [HttpGet("{id:length(24)}")]
     public async Task<ActionResult<Expense>> GetUserExpense(string id) {
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
@@ -42,6 +53,7 @@ public class ExpenseController : ControllerBase {
     [Authorize]
     [HttpPost]
     public async Task<IActionResult> PostUserExpense(ExpenseItem newExpense) {
+        // Thread.Sleep(2000);
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
         if (userIdClaim == null || !String.Equals(userIdClaim.Value, newExpense.UserId)) {
             return Unauthorized(new { message = "JWT contains invalid user ID" });
