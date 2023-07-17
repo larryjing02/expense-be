@@ -86,6 +86,12 @@ public class DevController : ControllerBase {
         return await _expenseService.GetExpensesSumByCategoryAsync(userId);
     }
 
+    [HttpGet("expense/chart/{userId:length(24)}")]
+    public async Task<ActionResult<List<KeyValuePair<string, decimal>>>> GetExpensesSumByDateRange(string userId,
+        [FromQuery] string timeRange, [FromQuery] DateTime startDate, [FromQuery] DateTime? endDate = null) {
+        return await _expenseService.GetExpensesSumByDateRangeAsync(userId, timeRange, startDate, endDate ?? DateTime.UtcNow.Date);
+    }
+
     [HttpPost("expense")]
     public async Task<IActionResult> PostExpense(Expense newExpense) {
         await _expenseService.CreateAsync(newExpense);

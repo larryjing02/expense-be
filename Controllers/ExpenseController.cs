@@ -37,6 +37,18 @@ public class ExpenseController : ControllerBase {
     }
 
     [Authorize]
+    [HttpGet("chart")]
+    public async Task<ActionResult<List<KeyValuePair<string, decimal>>>> GetExpensesSumByDateRange([FromQuery] string timeRange,
+        [FromQuery] DateTime startDate, [FromQuery] DateTime? endDate = null) {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
+        if (userIdClaim == null)
+        {
+            return Unauthorized(new { message = "JWT contains invalid user ID" });
+        }
+        return await _expenseService.GetExpensesSumByDateRangeAsync(userIdClaim.Value, timeRange, startDate, endDate ?? DateTime.UtcNow.Date);
+    }
+
+    [Authorize]
     [HttpGet("{id:length(24)}")]
     public async Task<ActionResult<Expense>> GetUserExpense(string id) {
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
