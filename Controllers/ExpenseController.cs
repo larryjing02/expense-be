@@ -40,6 +40,7 @@ public class ExpenseController : ControllerBase {
     [HttpGet("chart")]
     public async Task<ActionResult<List<KeyValuePair<string, decimal>>>> GetExpensesSumByDateRange([FromQuery] string timeRange,
         [FromQuery] DateTime startDate, [FromQuery] DateTime? endDate = null) {
+            
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
         if (userIdClaim == null)
         {

@@ -70,6 +70,8 @@ public class ExpenseService {
     }
 
     private string GetIntervalKey(DateTime timestamp, DateTime startDate, string timeRange) {
+        var offset = TimeZoneInfo.Local.GetUtcOffset(timestamp).TotalHours;
+        timestamp = timestamp.AddHours(offset);
         switch (timeRange.ToLower()) {
             case "day":
                 return timestamp.Date.ToString("yyyy-MM-dd");
